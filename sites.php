@@ -43,3 +43,4 @@
 # $sites['localhost.example'] = 'example.com';
 
 $sites['bestsite.dev'] = 'bestsite';
+$sites['goodsite.dev'] = 'goodsite';
