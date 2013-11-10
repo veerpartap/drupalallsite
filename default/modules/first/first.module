@@ -1,0 +1,84 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * A module exemplifying Drupal coding practices and APIs.
+ *
+ * This module provides a block that lists all of the
+ * installed modules. It illustrates coding standards,
+ * practices, and API use for Drupal 7.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function first_help($path, $arg) {
+    if ($path == 'admin/help#first') {
+
+        $values = array('!url' => 'http://drupal.org','%color' => 'blue');
+        //print t('My favorite color is %color.', $values);
+        //print t('The website can be found at !url', $values);
+        return t("A demonstration module. !url. My favorite color is %color. First, the previous code conforms to Drupal's coding standards, which we briefly covered earlier. Whitespace separates the if and the opening parenthesis (, and there is also a space between the closing parenthesis ) and the opening curly brace ({). There are also spaces on both sides of the equality operator ==. Code is indented with two spaces per level, and we never use tabs. In general, Drupal coders tend to use single quotes (') to surround strings because of the (admittedly slight) speed improvement gained by skipping interpolation.", $values);
+    }
+}
+
+function first_block_info() {
+    // This example comes from node.module.
+
+    $blocks['list_modules'] = array(
+        'info' => t('A listing of all of the enabled modules.'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+
+    $blocks['firstinfoblock'] = array(
+        'info' => t('First Help Info Block'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+
+    $blocks['firstinfoblockrecent'] = array(
+        'info' => t('First Recent Info Help content'),
+        // DRUPAL_CACHE_PER_ROLE will be assumed.
+    );
+
+
+
+    return $blocks;
+}
+
+
+function first_block_view($delta = '') {
+    // This example is adapted from node.module.
+    $block = array();
+
+    switch ($delta) {
+        case 'list_modules':
+            $list = module_list();
+
+            $theme_args = array('items' => $list, 'type' => 'ol');
+            $content = theme('item_list', $theme_args);
+
+            $block = array(
+                'subject' => t('Enabled Modules'),
+                'content' => $content,
+            );
+            break;
+        case 'firstinfoblock':
+            $block['subject'] = t('First Info Block');
+            $block['content'] = array(
+                '#theme' => 'feed_icon',
+                '#url' => 'rss.xml',
+                '#title' => t('Syndicate'),
+            );
+            break;
+
+        case 'firstinfoblockrecent':
+            $block['content'] = array(
+                '#theme' => 'feed_icon',
+                '#url' => 'rss.xml',
+                '#title' => t('First Info Block Recent '),
+            );
+            break;
+    }
+    return $block;
+}

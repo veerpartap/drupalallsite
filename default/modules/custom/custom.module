@@ -1,0 +1,178 @@
+<?php
+
+
+/**
+ * @file
+ * An example module for how to create a module tutorial.
+ */
+
+
+/**
+ * Implements hook_block_info.
+ */
+function custom_block_info() {
+    global $user;
+
+    $blocks['custom'] = array(
+        'info' => t('Custom block for @user', array('@user' => $user->name)),
+    );
+
+    #$blocks['custom'] = array('info' => t('Custom block'));
+    return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view.
+ */
+function custom_block_view($delta = '') {
+    global $user;
+
+    //select * from taxonomy_term_data;
+    $queryTags = db_select('taxonomy_term_data', 'n');
+    // tid | vid | name
+    $queryTags->fields('n',array('tid','vid','name'))
+        ->range(0,20);//LIMIT to 2 records
+    $resultTags = $queryTags->execute();
+    $varTags = "";
+    while($record = $resultTags->fetchAssoc()) {
+        #$varTags = $varTags. " [ ".$record['name']." -- ".$record['tid']." ]";
+
+        //$uri = entity_uri('taxonomy_term', $term);
+        $uri['options']['attributes']['class'][] = 'tagclouds';
+        $uri['options']['attributes']['class'][] = 'level0';
+        $uri['options']['attributes']['title'] = "Tag Title";
+        $uri['path']='http://testsite.mainhost.com/taxonomy/term/'.$record['tid'];
+        $varTags = $varTags. " ".l($record['name'], $uri['path'], $uri['options'])." \n";
+    }
+
+
+    $query = db_select('node', 'n');
+    $query->join('users', 'u', 'n.uid = u.uid'); //JOIN node with users
+    //$query->groupBy('u.uid');//GROUP BY user ID
+    //'nid','vid','type','language','title','uid','status','created','changed','comment','promote','sticky','tnid','translate'
+    //$query->fields('n',array('title','created'))//SELECT the fields from node
+    $query->fields('n',array('nid','vid','type','language','title','uid','status','created','changed','comment','promote','sticky','tnid','translate'))//SELECT the fields from node
+        ->fields('u',array('name'))//SELECT the fields from user
+        ->orderBy('created', 'DESC')//ORDER BY created
+        ->range(0,10);//LIMIT to 2 records
+    $result = $query->execute();
+    $varArt ="";
+    /*while($record = $result->fetchAssoc()) {
+        echo "<pre>";    print_r($record);      echo "</pre>";
+        $varArt = $varArt. " \n ".$record['title']."";
+    }*/
+
+    $block['content'] =$varTags;
+    /*$block['content'] = t('Hello @user from IP @host @articles',array(
+        '@user' => format_username($user),
+        '@host' => $user->hostname,
+        '@articles' => $varTags
+
+    ));*/
+    return $block;
+}
+
+
+
+/**
+ * Implements hook_block_view.
+ */
+/*function custom_block_view($delta = '') {
+    global $user;
+    $block['content'] = t('Hello @user from IP @host',array(
+        '@user' => format_username($user),
+        '@host' => $user->hostname
+    ));
+
+    $result = db_select('node','a')
+        ->fields('a', array('title'))
+        ->execute();
+
+    foreach($result as $node) {
+        $items[] = array(
+            'data' => t($node->title)
+        );
+    }
+
+    $block['content'] .= theme('item_list', array(
+        'items' => $items
+    ));
+
+    return $block;
+}*/
+
+
+
+/**
+ * Implements hook_help.
+ */
+function custom_help($path, $arg) {
+    if ($path == 'admin/help#custom') {
+        return t('Custom module help page');
+    }
+}
+
+
+/**
+ * Implements hook_menu.
+ */
+function custom_menu() {
+    $items['custom'] = array(
+        'title' => 'Custom',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('custom_form'),
+        'access arguments' => array('custom module'),
+        //'access callback' => TRUE,
+    );
+    return $items;
+}
+
+/**
+ * Our custom form.
+ */
+function custom_form($form,&$form_submit) {
+    $form['title'] = array(
+        '#title' => t('Give a title'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+    );
+    $form['submit'] = array(
+        '#value' => 'Submit',
+        '#type' => 'submit',
+    );
+    return $form;
+}
+
+
+/**
+ * Implements hook_submit.
+ */
+function custom_form_submit($form,&$form_submit ) {
+    //dpm($form_submit);
+    $title = $form_submit['values']['title'];
+    drupal_set_message(t('You provided a title @title!',
+        array('@title' => $title)));
+}
+
+
+/**
+ * Implements hook_permission.
+ */
+function custom_permission() {
+    return array(
+        'custom module' => array(
+            'title' => t('Custom module permission'),
+        ));
+}
+
+
+/**
+ * Implements hook_validate.
+ */
+function custom_form_validate($form,&$form_submit) {
+    $title = check_plain($form_submit['values']['title']);
+    if ($title != 'test') {
+        form_set_error('title',t("You didn't submit 'test'"));
+    }
+}
