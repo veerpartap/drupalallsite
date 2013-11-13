@@ -1,0 +1,63 @@
+<?php
+
+
+/**
+ * @file
+ * An example module for how to create a module tutorial.
+ */
+
+
+/**
+ * Implements hook_help.
+ */
+function tagmodule_help($path, $arg) {
+    if ($path == 'admin/help#tagmodule') {
+        return t("tagmodule module help page. Site Tags allows site users to view all the tags added by users while adding articles or they can limit their search for that what they are looking for.");
+    }
+}
+
+
+/**
+ * Implements hook_block_view
+ */
+
+function tagmodule_block_view($delta = '') {
+    // This example is adapted from node.module.
+    $block = array();
+
+    switch ($delta) {
+        case 'tagmodule_module':
+            $queryTags = db_select('taxonomy_term_data', 'n');
+            $queryTags->fields('n',array('tid','vid','name'))
+                ->orderby('RAND()')
+                ->range(0,20);//LIMIT to 2 records
+            $resultTags = $queryTags->execute();
+            $varTags = "";
+            while($record = $resultTags->fetchAssoc()) {
+                $uri['options']['attributes']['title'] = "Tag Title";
+                $uri['path']='taxonomy/term/'.$record['tid'];
+                $varTags = $varTags. " ".l($record['name'], $uri['path'], $uri['options'])." \n";
+            }
+
+            $block['content'] =$varTags;
+
+            break;
+    }
+
+    return $block;
+}
+
+
+/**
+ * Implements hook_block_info.
+ */
+function tagmodule_block_info() {
+    // This example comes from node.module.
+
+    $blocks['tagmodule_module'] = array(
+        'info' => t('tagmodule Custome Module'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+
+    return $blocks;
+}

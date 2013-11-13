@@ -24,6 +24,7 @@ regions[bottom_2] = Bottom 2
 regions[bottom_3] = Bottom 3
 regions[bottom_4] = Bottom 4
 regions[sitetags_region]   = SiteTags Custom Region
+regions[tagmodule_module]   = Tags Module Region
 features[] = logo
 features[] = name
 features[] = slogan

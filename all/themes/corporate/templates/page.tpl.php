@@ -182,7 +182,7 @@
 
       <style>
           #IDsitetags #block-sitetags-sitetags-module .content{
-              border:1px solid red;
+              border:1px solid greenyellow;
               width:200px;
               padding:10px;
           }
@@ -195,8 +195,18 @@
               margin:2px;font-weight: bold; font-size: 10px;text-decoration: underline;
           }
 
-          #IDsitetags #block-sitetags-sitetags-module .content a:visited{
-              margin:2px;font-weight: bold; font-size: 10px;colo:red;
+          #TagModule #block-sitetags-sitetags-module .content{
+              border:1px solid green;
+              width:200px;
+              padding:10px;
+          }
+
+          #TagModule #block-sitetags-sitetags-module .content a{
+              margin:2px;font-weight: bold; font-size: 10px;
+          }
+
+          #TagModule #block-sitetags-sitetags-module .content a:hover{
+              margin:2px;font-weight: bold; font-size: 10px;text-decoration: underline;
           }
 
 
@@ -204,6 +214,10 @@
       <div class="clear"></div>
       <div id="IDsitetags" >
           <?php print render($page['sitetags_region']) ?>
+      </div>
+ 
+      <div id="TagModule" >
+          <?php print render($page['tagmodule_module']) ?>
       </div>
 
 </div> 
