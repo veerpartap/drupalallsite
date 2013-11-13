@@ -1,0 +1,84 @@
+<?php
+
+
+/**
+ * @file
+ * An example module for how to create a module tutorial.
+ */
+
+
+/**
+ * Implements hook_help.
+ */
+function sitetags_help($path, $arg) {
+    if ($path == 'admin/help#sitetags') {
+        return t("Sitetags module help page. Site Tags allows site users to view all the tags added by users while adding articles or they can limit their search for that what they are looking for.");
+    }
+}
+
+
+/**
+ * Implements hook_block_info.
+ */
+function sitetags_block_info() {
+    // This example comes from node.module.
+
+    $blocks['sitetags_module'] = array(
+        'info' => t('SiteTags Custome Module'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+
+    return $blocks;
+}
+
+
+
+
+function sitetags_block_view($delta = '') {
+    // This example is adapted from node.module.
+    $block = array();
+
+    switch ($delta) {
+        case 'sitetags_module':
+            $queryTags = db_select('taxonomy_term_data', 'n');
+            $queryTags->fields('n',array('tid','vid','name'))
+                ->orderby('RAND()')
+                ->range(0,20);//LIMIT to 2 records
+            $resultTags = $queryTags->execute();
+            $varTags = "";
+            while($record = $resultTags->fetchAssoc()) {
+                $uri['options']['attributes']['title'] = "Tag Title";
+                $uri['path']='taxonomy/term/'.$record['tid'];
+                $varTags = $varTags. " ".l($record['name'], $uri['path'], $uri['options'])." \n";
+            }
+
+            $block['content'] =$varTags;
+
+            break;
+        case 'firstinfoblock':
+            $list = module_list();
+
+            $theme_args = array('items' => $list, 'type' => 'ol');
+            $content = theme('item_list', $theme_args);
+
+            $block = array(
+                'subject' => t('Enabled Modules'),
+                'content' => $content,
+            );
+            break;
+
+        case 'firstinfoblockrecent':
+            $list = module_list();
+
+            $theme_args = array('items' => $list, 'type' => 'ol');
+            $content = theme('item_list', $theme_args);
+
+            $block = array(
+                'subject' => t('Enabled Modules'),
+                'content' => $content,
+            );
+            break;
+    }
+
+    return $block;
+}

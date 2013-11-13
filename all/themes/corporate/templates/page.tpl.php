@@ -179,6 +179,33 @@
   <div class="clear"></div>
   <?php print render($page['footer']) ?>
  </div>
+
+      <style>
+          #IDsitetags #block-sitetags-sitetags-module .content{
+              border:1px solid red;
+              width:200px;
+              padding:10px;
+          }
+
+          #IDsitetags #block-sitetags-sitetags-module .content a{
+            margin:2px;font-weight: bold; font-size: 10px;
+          }
+
+          #IDsitetags #block-sitetags-sitetags-module .content a:hover{
+              margin:2px;font-weight: bold; font-size: 10px;text-decoration: underline;
+          }
+
+          #IDsitetags #block-sitetags-sitetags-module .content a:visited{
+              margin:2px;font-weight: bold; font-size: 10px;colo:red;
+          }
+
+
+      </style>
+      <div class="clear"></div>
+      <div id="IDsitetags" >
+          <?php print render($page['sitetags_region']) ?>
+      </div>
+
 </div> 
 
   <?php if ($page['footer_first'] || $page['footer_second'] || $page['footer_third']): ?>
@@ -203,7 +230,7 @@
     </div> 
     </div> 
    <?php endif; ?>
-   
+
     <?php if($page['bottom_1'] || $page['bottom_2'] || $page['bottom_3'] || $page['bottom_4']) : ?>
     <div id="bottom-wrapper" class="in<?php print (bool) $page['bottom_1'] + (bool) $page['bottom_2'] + (bool) $page['bottom_3'] + (bool) $page['bottom_4']; ?>">
           <?php if($page['bottom_1']) : ?>
